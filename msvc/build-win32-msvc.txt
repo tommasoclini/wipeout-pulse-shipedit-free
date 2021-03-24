@@ -1,0 +1,13 @@
+Build zlib with CMake
+ - copy zlib.h zconf.h and libs and DLLs  to common lib/include folders
+
+Build libpng with CMake
+ - set PNG_BUILD_ZLIB
+ - set ZLIB_LIBRARY to the zlib.lib file (might also need to set ZLIB_LIBRARY_DEBUG / ZLIB_LIBRARY_RELEASE)
+ - set ZLIB_INCLUDE_DIR to the folder with the .h files
+ - copy png.h pngconf.h pnglibconf.h  and libs and DLLs to common lib/include folders
+
+Build SDL2 with CMake
+ - check the "LIBC" option, so that linking doesn't fail
+ - set CMAKE_INSTALL_PREFIX to ${CMAKE_CURRENT_BINARY_DIR}/install, then you can just run
+   the "install" target

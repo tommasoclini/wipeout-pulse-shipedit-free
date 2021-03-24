@@ -1,0 +1,93 @@
+shipedit -- WipeOut Pulse PSP Ship Skin Editor
+Copyright (c) 2021 Thomas Perl <m@thp.io> -- https://thp.io/2021/shipedit/
+
+An unofficial/fan-made ship skin editor for the 2007 PSP game WipEout Pulse.
+
+
+QUICK START
+-----------
+
+This tool allows you to create ship skins (liveries) for WipEout Pulse. It can
+load and export 256x256 PNG files as well as the "16034453" savegame format.
+
+The saved PNG files are useful for sharing online -- pixel metadata is written
+in the lower right section of the image so that the view settings, team info
+and save slot are preserved and can be loaded back into the tool. Shared PNG
+files can have more than 16 colors. You can also use the PNG export and import
+function to edit the ship skin in an image editor of your choice and/or use
+external quantization methods to quantize each image to 16 colors.
+
+To create a savegame, use the "Build" option. This will create a save file that
+can be transferred to PSP/SAVEDATA/ on the PSP's memory stick or transferred to
+the PS Vita using CMA or QCMA. The save file format only supports 16 colors per
+image. You can either use the "Quant" button to automatically quantize the image
+to 16 colors, or use an external editor to carry out the conversion manually.
+
+Ship skins are saved in different "slots"; the "Slot" button can be used to
+pick a slot, which will determine the folder name for the "Build" action.
+
+Both the "Save" (as PNG) and "Build" (savegame file) will create a preview of
+the ship skin -- be sure to pose your ship in a nice way in the editor view.
+The preview will be put into the lower right section for exported PNGs and in
+the ICON0.PNG ("savegame icon") file. This makes it easier to identify the ship
+skin when having multiple skin savegame files.
+
+
+DEFAULT LIVERIES
+----------------
+
+This program works without any files from the original game. However, if you
+want to load the default liveries, you have to provide the game data files, as
+the image data is read from those files. You can dump those files from your PSP
+from the UMD release of the game or the digital PSN release on the Vita.
+
+To load default liveries, copy fedata.wad (from the main game) and optionally
+pack1_ui1.edat, pack2_ui1.edat, pack3_ui1.edat, pack4_ui1.edat (from the DLCs)
+into the current directory. Note that the file names must be lowercase.
+
+
+KNOWN ISSUES
+------------
+
+scolorq sometimes fails to quantize the image, the result is a black texture.
+You can "UNDO" the quantizatino and try again, sometimes restarting the program
+also helps.
+
+PPSSPP shows a warning on-screen about old firmware when loading the ship
+skin savegame. No such error is displayed on a PSP or Vita.
+
+
+KEYBINDINGS
+-----------
+
+Most of the things can be controlled via the mouse and on-screen buttons,
+here are key bindings that don't have corresponding UI elements:
+
+  [m] ... Toggle magnifier
+  [right mouse button] or [left mouse button + CTRL] ... Rotate view
+  [middle mouse button] or [left mouse button + ALT] ... Pan view
+  [q] ... Exit
+
+
+OPEN SOURCE
+-----------
+
+Here's a listing of the open source code / libraries used in this project:
+
+psp-save -- https://github.com/38-vita-38/psp-save
+  chnnlsv.c (GNU GPLv2 or later) (c) 2012- PPSSPP Project
+  hash.c, psf.c (BSD) (c) 2005 Jim Paris <jim@jtan.com>, psp123
+  psp-save.c (GNU GPLv2 or later, BSD) (c) 2018 38_ViTa_38 (based on PSPSDK code)
+
+libkirk -- https://github.com/hrydgard/ppsspp
+  AES.c (Public Domain) Authors: Vincent Rijmen, Antoon Bosselaers, Paulo Barreto.
+  SHA1.c David Ireland, adapted from code by A.M. Kuchling 1995, based on Peter Gutmann's code
+  kirk_engine.c (GNU GPLv3 or later) by Draan with help from community members (see source)
+  bn.c (GNU GPLv2) Copyright 2007,2008,2010  Segher Boessenkool  <segher@kernel.crashing.org>
+  ec.c (GNU GPLv2) Copyright 2007,2008,2010  Segher Boessenkool  <segher@kernel.crashing.org>
+
+scolorq (MIT license) -- Copyright (c) 2006 Derrick Coetzee
+Native File Dialog (zlib license) -- Copyright 2014-2019 Frogtoss Games, Inc.
+
+Also uses zlib (1995-2017 Jean-loup Gailly and Mark Adler), libpng (1995-2019 PNG Authors)
+and SDL2 (1997-2020 Sam Lantinga) under a zlib-style license.

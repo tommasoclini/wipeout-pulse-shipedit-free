@@ -1,0 +1,5 @@
+/build
+/mingw/win32
+/mingw/win64
+/mingw/*.tar.*
+/*.exe
