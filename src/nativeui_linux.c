@@ -103,8 +103,12 @@ nativeui_choose_color(uint32_t rgba)
 char *
 nativeui_select_folder()
 {
+    static nfdchar_t *last_path = NULL;
+
     nfdchar_t *out_dir = NULL;
-    if (NFD_PickFolder(NULL, &out_dir) == NFD_OKAY) {
+    if (NFD_PickFolder(last_path, &out_dir) == NFD_OKAY) {
+        free(last_path);
+        last_path = strdup(out_dir);
         return out_dir;
     }
 

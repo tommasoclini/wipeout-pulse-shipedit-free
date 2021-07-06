@@ -77,9 +77,25 @@ nativeui_choose_color(uint32_t rgba)
     return rgba;
 }
 
+static int
+SelectFolderProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
+{
+    switch (uMsg) {
+        case BFFM_INITIALIZED:
+            SendMessage(hwnd, BFFM_SETSELECTION, TRUE, (LPARAM)lpData);
+            break;
+        default:
+            return 0;
+    }
+
+    return 0;
+}
+
 char *
 nativeui_select_folder()
 {
+    static char *last_path = NULL;
+
     char displayName[MAX_PATH];
     memset(displayName, 0, sizeof(displayName));
 
@@ -89,8 +105,8 @@ nativeui_select_folder()
         displayName, // pszDisplayName
         "Choose output folder", // lpszTitle
         BIF_USENEWUI, // flags
-        0, // lpfn
-        0, // lParam
+        SelectFolderProc, // lpfn
+        (LPARAM)last_path, // lParam
         0, // iImage
     };
 
@@ -98,6 +114,8 @@ nativeui_select_folder()
     if (result != NULL) {
         char path[MAX_PATH];
         if (SHGetPathFromIDListA(result, path)) {
+            free(last_path);
+            last_path = strdup(path);
             return strdup(path);
         }
     }
