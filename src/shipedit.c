@@ -91,6 +91,23 @@ static struct TeamToObject {
     struct ShipModel *loaded_model;
 } *g_teams = NULL;
 
+
+static bool
+match_team_name(const char *name, struct TeamToObject *team)
+{
+    if (strcmp(name, team->team_name) == 0) {
+        return true;
+    }
+
+    if (strcmp(name, "Mirage") == 0 && strcmp(team->team_name, "Mantis") == 0) {
+        // Previous versions got this wrong; when loading, treat "Mirage" like "Mantis"
+        // saving the file will write the new team_name (Mantis) and fix loading in the game
+        return true;
+    }
+
+    return false;
+}
+
 static int
 g_num_teams = 0;
 
@@ -1496,7 +1513,7 @@ scene_render(struct Scene *scene, int w, int h, float t, bool picking)
     if (scene->mode == MODE_ABOUT || scene->mode == MODE_EDITOR) {
         glColor4f(1.f, 1.f, 1.f, 1.f - scene->about_transition);
         glEnable(GL_BLEND);
-        draw_with_font_xy(g_font_heading, shipview_layout->rect.x + 8, shipview_layout->rect.y + shipview_layout->rect.h - 28, g_teams[scene->current_ship].team_name);
+        draw_with_font_xy(g_font_heading, shipview_layout->rect.x + 8, shipview_layout->rect.y + shipview_layout->rect.h - 28, g_teams[scene->current_ship].team_label);
     }
 
     if (scene->mode == MODE_ABOUT) {
@@ -1681,7 +1698,7 @@ meta_png_io(struct Scene *scene, uint32_t *rgba, int w, int h, bool writemode)
         if (check == meta.crc) {
             int team_index = 0;
             for (team_index=0; team_index<g_num_teams; ++team_index) {
-                if (strcmp(meta.team_name, g_teams[team_index].team_name) == 0) {
+                if (match_team_name(meta.team_name, &g_teams[team_index])) {
                     break;
                 }
             }
@@ -1780,7 +1797,7 @@ load_dat(struct Scene *scene, const char *filename)
 
     int team_index = 0;
     for (team_index=0; team_index<g_num_teams; ++team_index) {
-        if (strcmp(shipdat, g_teams[team_index].team_name) == 0) {
+        if (match_team_name(shipdat, &g_teams[team_index])) {
             break;
         }
     }
