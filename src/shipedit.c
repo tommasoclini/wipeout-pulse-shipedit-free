@@ -112,7 +112,7 @@ static int
 g_num_teams = 0;
 
 static const int
-MAX_SLOTS = 20;
+MAX_SLOTS = 40;
 
 struct Vec3 {
     float x;
