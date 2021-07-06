@@ -70,6 +70,9 @@ ZOOM_MAX_FOV = 90.f;
 static uint32_t
 g_current_color = 0x000000;
 
+static bool
+g_batch_mode = false;
+
 static struct {
     bool dragging;
     bool panning;
@@ -952,7 +955,7 @@ render_shipview(struct Scene *scene, struct ShipModel *model, int w, int h, bool
         float tmp[16];
         glGetFloatv(GL_PROJECTION_MATRIX, tmp);
 
-        float alpha = 0.9f;
+        float alpha = g_batch_mode ? 0.f : 0.9f;
         for (int i=0; i<16; ++i) {
             tmp[i] = alpha * s_projection[i] + (1.f - alpha) * tmp[i];
         }
@@ -1231,6 +1234,42 @@ button(struct Scene *scene, struct LayoutItem *item)
 #undef MUCHDARKER
 #undef MUCHLIGHTER
 }
+
+static const char *
+about_lines[] = {
+    "shipedit " VERSION,
+    "(c) 2021 Thomas Perl <m@thp.io> -- https://thp.io/2021/shipedit/",
+    "",
+    "This is an unofficial/fan-made ship skin editor for the 2007 PSP game WipEout Pulse.",
+    "",
+    "To load default liveries, copy fedata.wad (from the main game) and optionally pack1_ui1.edat,",
+    "pack2_ui1.edat, pack3_ui1.edat, pack4_ui1.edat (from the DLCs) into the current directory.",
+    "",
+    "  [m] ... Toggle magnifier",
+    "  [right mouse button] or [left mouse button + CTRL] ... Rotate view",
+    "  [middle mouse button] or [left mouse button + ALT] ... Pan view",
+    "  [q] ... Exit",
+    "",
+    "Open source code used:",
+    "",
+    "psp-save -- https://github.com/38-vita-38/psp-save",
+    "  chnnlsv.c (GNU GPLv2 or later) (c) 2012- PPSSPP Project",
+    "  hash.c, psf.c (BSD) (c) 2005 Jim Paris <jim@jtan.com>, psp123",
+    "  psp-save.c (GNU GPLv2 or later, BSD) (c) 2018 38_ViTa_38 (based on PSPSDK code)",
+    "",
+    "libkirk -- https://github.com/hrydgard/ppsspp",
+    "  AES.c (Public Domain) Authors: Vincent Rijmen, Antoon Bosselaers, Paulo Barreto.",
+    "  SHA1.c David Ireland, adapted from code by A.M. Kuchling 1995, based on Peter Gutmann's code",
+    "  kirk_engine.c (GNU GPLv3 or later) by Draan with help from community members (see source)",
+    "  bn.c (GNU GPLv2) Copyright 2007,2008,2010  Segher Boessenkool  <segher@kernel.crashing.org>",
+    "  ec.c (GNU GPLv2) Copyright 2007,2008,2010  Segher Boessenkool  <segher@kernel.crashing.org>",
+    "",
+    "scolorq (MIT license) -- Copyright (c) 2006 Derrick Coetzee",
+    "Native File Dialog (zlib license) -- Copyright 2014-2019 Frogtoss Games, Inc.",
+    "",
+    "Also uses zlib (1995-2017 Jean-loup Gailly and Mark Adler), libpng (1995-2019 PNG Authors)",
+    "and SDL2 (1997-2020 Sam Lantinga) under a zlib-style license.",
+};
 
 
 void
@@ -1525,41 +1564,6 @@ scene_render(struct Scene *scene, int w, int h, float t, bool picking)
 
         int x = 15 + shipview_layout->rect.x;
         int y = 10 + shipview_layout->rect.y;
-
-        static const char *about_lines[] = {
-            "shipedit " VERSION,
-            "(c) 2021 Thomas Perl <m@thp.io> -- https://thp.io/2021/shipedit/",
-            "",
-            "This is an unofficial/fan-made ship skin editor for the 2007 PSP game WipEout Pulse.",
-            "",
-            "To load default liveries, copy fedata.wad (from the main game) and optionally pack1_ui1.edat,",
-            "pack2_ui1.edat, pack3_ui1.edat, pack4_ui1.edat (from the DLCs) into the current directory.",
-            "",
-            "  [m] ... Toggle magnifier",
-            "  [right mouse button] or [left mouse button + CTRL] ... Rotate view",
-            "  [middle mouse button] or [left mouse button + ALT] ... Pan view",
-            "  [q] ... Exit",
-            "",
-            "Open source code used:",
-            "",
-            "psp-save -- https://github.com/38-vita-38/psp-save",
-            "  chnnlsv.c (GNU GPLv2 or later) (c) 2012- PPSSPP Project",
-            "  hash.c, psf.c (BSD) (c) 2005 Jim Paris <jim@jtan.com>, psp123",
-            "  psp-save.c (GNU GPLv2 or later, BSD) (c) 2018 38_ViTa_38 (based on PSPSDK code)",
-            "",
-            "libkirk -- https://github.com/hrydgard/ppsspp",
-            "  AES.c (Public Domain) Authors: Vincent Rijmen, Antoon Bosselaers, Paulo Barreto.",
-            "  SHA1.c David Ireland, adapted from code by A.M. Kuchling 1995, based on Peter Gutmann's code",
-            "  kirk_engine.c (GNU GPLv3 or later) by Draan with help from community members (see source)",
-            "  bn.c (GNU GPLv2) Copyright 2007,2008,2010  Segher Boessenkool  <segher@kernel.crashing.org>",
-            "  ec.c (GNU GPLv2) Copyright 2007,2008,2010  Segher Boessenkool  <segher@kernel.crashing.org>",
-            "",
-            "scolorq (MIT license) -- Copyright (c) 2006 Derrick Coetzee",
-            "Native File Dialog (zlib license) -- Copyright 2014-2019 Frogtoss Games, Inc.",
-            "",
-            "Also uses zlib (1995-2017 Jean-loup Gailly and Mark Adler), libpng (1995-2019 PNG Authors)",
-            "and SDL2 (1997-2020 Sam Lantinga) under a zlib-style license.",
-        };
 
         for (int i=0; i<sizeof(about_lines)/sizeof(about_lines[0]); ++i) {
             if (!about_lines[i][0]) {
@@ -1862,7 +1866,6 @@ encode_image(unsigned char *buf, struct Material *mat)
             }
 
             if (pixel_index == -1) {
-                printf("inserting into palette\n");
                 pixel_index = palette_size++;
                 palette[pixel_index] = pixel;
                 if (palette_size > 16) {
@@ -2146,6 +2149,41 @@ missing_wad_file_info()
             "and restart to load default skins.");
 }
 
+void
+export_savegame(struct Scene *scene, int w, int h, const char *out_dir)
+{
+    unsigned char buf[32+3*16*4+3*128*128/2];
+    memset(buf, 0, sizeof(buf));
+    strcpy(buf, g_teams[scene->current_ship].team_name);
+
+    bool result = true;
+
+    struct Material *cur = SHIP_FROM_SCENE(scene)->materials;
+    while (cur != NULL) {
+        if (cur->index != -1) {
+            if (!encode_image(buf, cur)) {
+                result = false;
+                break;
+            }
+        }
+
+        cur = cur->next;
+    }
+
+    struct SaveLayoutContext save_icon0_context = {
+        w,
+        h,
+        icon0_preview_layout,
+    };
+
+    if (result) {
+        saveskin_save(out_dir, buf, sizeof(buf), scene->save_slot,
+                save_layout, &save_icon0_context);
+    } else {
+        nativeui_show_error("Could not save file ", "Try quantizing the images first.");
+    }
+}
+
 int main(int argc, char *argv[])
 {
     SDL_Init(SDL_INIT_VIDEO);
@@ -2229,6 +2267,89 @@ int main(int argc, char *argv[])
 
     struct FPS fps;
     fps_init(&fps, SDL_GetTicks());
+
+    if (argc != 1) {
+        int argi = 1;
+        bool want_usage = false;
+        bool have_png = false;
+        int want_slot = -1;
+        const char *export_dir = NULL;
+        const char *msg = NULL;
+        bool want_version = false;
+        while (argi < argc) {
+            if (strcmp(argv[argi], "-h") == 0 || strcmp(argv[argi], "--help") == 0) {
+                want_usage = true;
+                break;
+            } else if (strcmp(argv[argi], "--version") == 0) {
+                want_version = true;
+                break;
+            } else if (strcmp(argv[argi], "--slot") == 0) {
+                ++argi;
+                if (argi >= argc) {
+                    msg = "Missing argument: SLOT";
+                    want_usage = true;
+                    break;
+                }
+                want_slot = atoi(argv[argi]);
+            } else if (strcmp(argv[argi], "--export") == 0) {
+                ++argi;
+                if (argi >= argc) {
+                    msg = "Missing argument: OUTDIR";
+                    want_usage = true;
+                    break;
+                }
+                export_dir = argv[argi];
+            } else if (!have_png) {
+                if (!scene_load_skin(scene, argv[argi])) {
+                    printf("Could not load skin from %s\n", argv[argi]);
+                    exit(1);
+                }
+
+                have_png = true;
+            }
+
+            ++argi;
+        }
+
+        if (want_slot >= 0) {
+            scene->save_slot = (want_slot < MAX_SLOTS) ? want_slot : MAX_SLOTS;
+            printf("Save slot: %d\n", scene->save_slot);
+        }
+
+        if (export_dir) {
+            printf("Exporting to: %s\n", export_dir);
+
+            g_batch_mode = true;
+
+            scene_render(scene, w, h, 0.f, false);
+            export_savegame(scene, w, h, export_dir);
+
+            running = false;
+        }
+
+        if (want_version) {
+            printf("\n");
+            for (int i=0; i<sizeof(about_lines)/sizeof(about_lines[0]); ++i) {
+                printf("%s\n", about_lines[i]);
+            }
+            printf("\n");
+            exit(0);
+        }
+
+        if (want_usage) {
+            printf("\nUsage: %s [PNGFILE] [--slot SLOT] [--export OUTDIR] [--version]\n\n"
+                   " PNGFILE ........... Filename of a ship skin (PNG, DAT or 16034453 file) to load\n"
+                   " --slot SLOT ....... Set the savegame slot (XXXX in UCES00465DTEAMSKINXXXX)\n"
+                   " --export OUTDIR ... Batch mode: Export a savegame to the output folder\n"
+                   " --version ......... Show version, user guide and copyright information\n"
+                   "\n", argv[0]);
+
+            if (msg) {
+                printf("\n%s\n", msg);
+            }
+            exit(1);
+        }
+    }
 
     while (running) {
         SDL_Event e;
@@ -2361,36 +2482,7 @@ int main(int argc, char *argv[])
                             if (ITEM_ID(item) == ITEM_BUILD_SAVEFILE) {
                                 char *out_dir = nativeui_select_folder();
                                 if (out_dir != NULL) {
-                                    unsigned char buf[32+3*16*4+3*128*128/2];
-                                    memset(buf, 0, sizeof(buf));
-                                    strcpy(buf, g_teams[scene->current_ship].team_name);
-
-                                    bool result = true;
-
-                                    struct Material *cur = SHIP_FROM_SCENE(scene)->materials;
-                                    while (cur != NULL) {
-                                        if (cur->index != -1) {
-                                            if (!encode_image(buf, cur)) {
-                                                result = false;
-                                                break;
-                                            }
-                                        }
-
-                                        cur = cur->next;
-                                    }
-
-                                    struct SaveLayoutContext save_icon0_context = {
-                                        w,
-                                        h,
-                                        icon0_preview_layout,
-                                    };
-
-                                    if (result) {
-                                        saveskin_save(out_dir, buf, sizeof(buf), scene->save_slot,
-                                                save_layout, &save_icon0_context);
-                                    } else {
-                                        nativeui_show_error("Could not save file ", "Try quantizing the images first.");
-                                    }
+                                    export_savegame(scene, w, h, out_dir);
                                     free(out_dir);
                                 }
                             }
