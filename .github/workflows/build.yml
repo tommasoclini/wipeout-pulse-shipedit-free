@@ -15,12 +15,3 @@ jobs:
       run: sudo apt install -y gcc-mingw-w64 g++-mingw-w64
     - name: Build
       run: bash mingw/build-win32.sh
-    - name: Archive Artifacts
-      uses: actions/upload-artifact@v2
-      with:
-          name: Full Release
-          path: |
-              *.exe
-              editor.wad
-              README
-              LICENSE

@@ -50,7 +50,7 @@ KNOWN ISSUES
 ------------
 
 scolorq sometimes fails to quantize the image, the result is a black texture.
-You can "UNDO" the quantizatino and try again, sometimes restarting the program
+You can "UNDO" the quantization and try again, sometimes restarting the program
 also helps.
 
 PPSSPP shows a warning on-screen about old firmware when loading the ship
@@ -67,6 +67,17 @@ here are key bindings that don't have corresponding UI elements:
   [right mouse button] or [left mouse button + CTRL] ... Rotate view
   [middle mouse button] or [left mouse button + ALT] ... Pan view
   [q] ... Exit
+
+
+BATCH MODE / COMMAND LINE
+-------------------------
+
+Usage: shipedit [PNGFILE] [--slot SLOT] [--export OUTDIR] [--version]
+
+ PNGFILE ........... Filename of a ship skin (PNG, DAT or 16034453 file) to load
+ --slot SLOT ....... Set the savegame slot (XXXX in UCES00465DTEAMSKINXXXX)
+ --export OUTDIR ... Batch mode: Export a savegame to the output folder
+ --version ......... Show version, user guide and copyright information
 
 
 OPEN SOURCE
