@@ -77,7 +77,7 @@ nativeui_choose_color(uint32_t rgba)
     return rgba;
 }
 
-static int
+static int __stdcall
 SelectFolderProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
 {
     switch (uMsg) {
