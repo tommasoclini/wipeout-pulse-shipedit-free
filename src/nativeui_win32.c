@@ -209,12 +209,6 @@ nativeui_open_file()
 }
 
 void
-nativeui_show_error(const char *title, const char *message)
-{
-    MessageBox(g.hwnd, message, title, MB_OK | MB_ICONEXCLAMATION);
-}
-
-void
 nativeui_deinit()
 {
 }

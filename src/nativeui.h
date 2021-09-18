@@ -40,7 +40,4 @@ char *
 nativeui_open_file();
 
 void
-nativeui_show_error(const char *title, const char *message);
-
-void
 nativeui_deinit();

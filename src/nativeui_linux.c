@@ -138,27 +138,6 @@ nativeui_open_file()
 }
 
 void
-nativeui_show_error(const char *title, const char *message)
-{
-    GtkWidget *dialog;
-
-    if (!gtk_init_check(NULL, NULL)) {
-        return;
-    }
-
-    dialog = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-                "<big>%s</big>\n\n%s", title, message);
-
-    gtk_dialog_run(GTK_DIALOG(dialog));
-
-    gtk_widget_destroy(dialog);
-
-    while (gtk_events_pending()) {
-        gtk_main_iteration();
-    }
-}
-
-void
 nativeui_deinit()
 {
 }

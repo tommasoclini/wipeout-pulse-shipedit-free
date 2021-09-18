@@ -2141,16 +2141,18 @@ scene_load_skin(struct Scene *scene, const char *filename)
 }
 
 void
-missing_wad_file_info()
+missing_wad_file_info(SDL_Window *window)
 {
-    nativeui_show_error("Default skins not available",
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING,
+            "Default skins not available",
             "Put fedata.wad, pack1_ui1.edat, pack2_ui1.edat, pack3_ui1.edat "
             "and pack4_ui1.edat from the game/DLCs into the current folder "
-            "and restart to load default skins.");
+            "and restart to load default skins.",
+            window);
 }
 
 void
-export_savegame(struct Scene *scene, int w, int h, const char *out_dir)
+export_savegame(SDL_Window *window, struct Scene *scene, int w, int h, const char *out_dir)
 {
     unsigned char buf[32+3*16*4+3*128*128/2];
     memset(buf, 0, sizeof(buf));
@@ -2180,7 +2182,10 @@ export_savegame(struct Scene *scene, int w, int h, const char *out_dir)
         saveskin_save(out_dir, buf, sizeof(buf), scene->save_slot,
                 save_layout, &save_icon0_context);
     } else {
-        nativeui_show_error("Could not save file ", "Try quantizing the images first.");
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                "Could not save file",
+                "Try quantizing the images first.",
+                window);
     }
 }
 
@@ -2204,7 +2209,10 @@ int main(int argc, char *argv[])
     nativeui_init(&wmInfo);
 
     if (!mount_wad("editor.wad")) {
-        nativeui_show_error("Missing file", "The file editor.wad is needed.");
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                "Missing file",
+                "The file editor.was is needed.",
+                window);
         return 1;
     }
 
@@ -2260,7 +2268,7 @@ int main(int argc, char *argv[])
     }
 
     if (missing_wad_files) {
-        missing_wad_file_info();
+        missing_wad_file_info(window);
     }
 
     scene->current_ship = 0;
@@ -2322,7 +2330,7 @@ int main(int argc, char *argv[])
             g_batch_mode = true;
 
             scene_render(scene, w, h, 0.f, false);
-            export_savegame(scene, w, h, export_dir);
+            export_savegame(window, scene, w, h, export_dir);
 
             running = false;
         }
@@ -2461,7 +2469,7 @@ int main(int argc, char *argv[])
                                 sprintf(tmp, "data/ships/%s/ship%s.dat", g_teams[scene->current_ship].slug, variant);
 
                                 if (!scene_load_skin(scene, tmp)) {
-                                    missing_wad_file_info();
+                                    missing_wad_file_info(window);
                                 }
 
                                 // start new undo stack
@@ -2473,7 +2481,10 @@ int main(int argc, char *argv[])
                                     undo_push(scene->undo, "Load image file");
 
                                     if (!scene_load_skin(scene, filename)) {
-                                        nativeui_show_error("Invalid file", "File must be a 256x256 PNG or a DAT file.");
+                                        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                                                "Invalid file",
+                                                "File must be a 256x256 PNG or a DAT file.",
+                                                window);
                                     }
 
                                     free(filename);
@@ -2482,7 +2493,7 @@ int main(int argc, char *argv[])
                             if (ITEM_ID(item) == ITEM_BUILD_SAVEFILE) {
                                 char *out_dir = nativeui_select_folder();
                                 if (out_dir != NULL) {
-                                    export_savegame(scene, w, h, out_dir);
+                                    export_savegame(window, scene, w, h, out_dir);
                                     free(out_dir);
                                 }
                             }
@@ -2533,7 +2544,10 @@ int main(int argc, char *argv[])
                                     // encode scene metadata
                                     meta_png_io(scene, buffer, 256, 256, true);
                                     if (!meta_png_io(scene, buffer, 256, 256, false)) {
-                                        nativeui_show_error("Metadata validation failed", "Viewport settings might not be restored.");
+                                        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_WARNING,
+                                                "Metadata validation failed",
+                                                "Viewport settings might not be restored.",
+                                                window);
                                     }
 
                                     struct Material *mat = SHIP_FROM_SCENE(scene)->materials;
