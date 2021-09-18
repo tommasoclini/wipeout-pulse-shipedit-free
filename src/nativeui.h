@@ -25,10 +25,10 @@
 #include "SDL_syswm.h"
 
 void
-nativeui_init(const SDL_SysWMinfo *info);
+nativeui_init(const SDL_SysWMinfo *info, SDL_Window *window);
 
-uint32_t
-nativeui_choose_color(uint32_t rgba);
+void
+nativeui_choose_color(uint32_t rgba, void (*set_color_func)(uint32_t, void *), void *user_data);
 
 char *
 nativeui_select_folder();
@@ -38,6 +38,9 @@ nativeui_save_png();
 
 char *
 nativeui_open_file();
+
+void
+nativeui_show_error(const char *title, const char *message);
 
 void
 nativeui_deinit();

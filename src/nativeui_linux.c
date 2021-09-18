@@ -32,12 +32,12 @@
 #include "nfd.h"
 
 void
-nativeui_init(const SDL_SysWMinfo *info)
+nativeui_init(const SDL_SysWMinfo *info, SDL_Window *window)
 {
 }
 
-uint32_t
-nativeui_choose_color(uint32_t rgba)
+void
+nativeui_choose_color(uint32_t rgba, void (*set_color_func)(uint32_t, void *), void *user_data)
 {
     union {
         uint32_t rgba;
@@ -97,7 +97,7 @@ nativeui_choose_color(uint32_t rgba)
         gtk_main_iteration();
     }
 
-    return rgba;
+    set_color_func(rgba, user_data);
 }
 
 char *
@@ -135,6 +135,27 @@ nativeui_open_file()
     }
 
     return NULL;
+}
+
+void
+nativeui_show_error(const char *title, const char *message)
+{
+    GtkWidget *dialog;
+
+    if (!gtk_init_check(NULL, NULL)) {
+        return;
+    }
+
+    dialog = gtk_message_dialog_new_with_markup(NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+                "<big>%s</big>\n\n%s", title, message);
+
+    gtk_dialog_run(GTK_DIALOG(dialog));
+
+    gtk_widget_destroy(dialog);
+
+    while (gtk_events_pending()) {
+        gtk_main_iteration();
+    }
 }
 
 void

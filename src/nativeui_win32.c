@@ -36,7 +36,7 @@ static struct {
 } g;
 
 void
-nativeui_init(const SDL_SysWMinfo *info)
+nativeui_init(const SDL_SysWMinfo *info, SDL_Window *window)
 {
     g.hwnd = info->info.win.window;
 
@@ -45,8 +45,8 @@ nativeui_init(const SDL_SysWMinfo *info)
     OleInitialize(NULL);
 }
 
-uint32_t
-nativeui_choose_color(uint32_t rgba)
+void
+nativeui_choose_color(uint32_t rgba, void (*set_color_func)(uint32_t, void *), void *user_data)
 {
     union {
         uint32_t rgba;
@@ -72,9 +72,8 @@ nativeui_choose_color(uint32_t rgba)
 
     if (ChooseColor(&cc)) {
         rgba = cc.rgbResult;
+        set_color_func(rgba, user_data);
     }
-
-    return rgba;
 }
 
 static int __stdcall
@@ -206,6 +205,12 @@ nativeui_open_file()
     SetCurrentDirectory(cwd);
 
     return result;
+}
+
+void
+nativeui_show_error(const char *title, const char *message)
+{
+    MessageBox(g.hwnd, message, title, MB_OK | MB_ICONEXCLAMATION);
 }
 
 void

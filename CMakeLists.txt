@@ -43,26 +43,26 @@ else()
     if(APPLE)
         list(APPEND NATIVEFILEDIALOG_SOURCES
             src/nativefiledialog/src/nfd_cocoa.m
+            src/nativeui_macos.m
         )
+
         find_library(COCOA_LIBRARY Cocoa)
         list(APPEND NFD_LIBRARIES ${COCOA_LIBRARY})
     else()
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+
+        link_directories(
+            ${GTK3_LIBRARY_DIRS}
+        )
+
+        list(APPEND NFD_LIBRARIES ${GTK3_LIBRARIES})
+
         list(APPEND NATIVEFILEDIALOG_SOURCES
             src/nativefiledialog/src/nfd_gtk.c
+            src/nativeui_linux.c
         )
     endif()
-
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
-
-    link_directories(
-        ${GTK3_LIBRARY_DIRS}
-    )
-
-    list(APPEND NATIVEFILEDIALOG_SOURCES
-        src/nativeui_linux.c
-    )
-    list(APPEND NFD_LIBRARIES ${GTK3_LIBRARIES})
 
     list(APPEND NATIVE_LIBRARIES m)
 endif()
