@@ -53,7 +53,7 @@
 #include "util.h"
 #include "fps.h"
 
-#define VERSION "v1.0.1"
+#define VERSION "v1.0.2"
 
 struct InMemoryFont *
 g_font_gui = NULL;
@@ -1244,7 +1244,7 @@ button(struct Scene *scene, struct LayoutItem *item)
 static const char *
 about_lines[] = {
     "shipedit " VERSION,
-    "(c) 2021 Thomas Perl <m@thp.io> -- https://thp.io/2021/shipedit/",
+    "(c) 2021, 2022 Thomas Perl <m@thp.io> -- https://thp.io/2021/shipedit/",
     "",
     "This is an unofficial/fan-made ship skin editor for the 2007 PSP game WipEout Pulse.",
     "",

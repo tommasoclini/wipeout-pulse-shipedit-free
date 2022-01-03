@@ -4,10 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## 1.0.2 - 2022-01-03
 
 ### Changed
 - Implemented native UI dialogs on macOS
+
+### Fixed
+- Triakis ship texture mapping error (Fixes #4, thanks to StingerTheRaven for reporting)
 
 
 ## 1.0.1 - 2021-07-06
