@@ -404,6 +404,9 @@ static struct LayoutItem *
 window_layout = &layout[0];
 
 static struct LayoutItem *
+texture_layout = &layout[1];
+
+static struct LayoutItem *
 shipview_layout = &layout[2];
 
 static struct LayoutItem *
@@ -722,7 +725,7 @@ instantiate_materials(struct ShipModel *model)
 
                 int index = material->index;
                 if (index == -1) {
-                    index = 90;
+                    index = 7;
                 } else {
                     index++;
                 }
@@ -730,7 +733,7 @@ instantiate_materials(struct ShipModel *model)
                 uint32_t *tmp = malloc(material->width * material->height * 4);
                 for (uint32_t y=0; y<material->height; ++y) {
                     for (uint32_t x=0; x<material->width; ++x) {
-                        tmp[y*material->width+x] = 0xFF000000 | ((x*2) << 16) | ((y*2) << 8) | (index);
+                        tmp[y*material->width+x] = 0xFF000000 | ((x<<1) << 16) | ((y<<1) << 8) | (index << 5);
                     }
                 }
 
@@ -1955,7 +1958,6 @@ plot_here(struct Scene *scene, int w, int h, int x, int y)
         scene->picking.zoom = scene->zoom;
         scene->picking.dx = scene->dx;
         scene->picking.dy = scene->dy;
-        scene->picking.dy = scene->dy;
         scene->picking.ortho = scene->ortho;
     }
 
@@ -1978,6 +1980,10 @@ plot_here(struct Scene *scene, int w, int h, int x, int y)
                 continue;
             }
 
+            // Location of cursor relative to texture preview
+            int texture_x = picking_x - texture_layout->rect.x;
+            int texture_y = picking_y - texture_layout->rect.y;
+
             // Vertical flip because of OpenGL bottom-left origin
             picking_y = h - 1 - picking_y;
 
@@ -1988,9 +1994,21 @@ plot_here(struct Scene *scene, int w, int h, int x, int y)
             uint32_t b = ((pixel >> 16) & 0xFF);
             uint32_t a = ((pixel >> 24) & 0xFF);
 
-            uint32_t picking_material_index = r;
-            uint32_t picking_u = g/2;
-            uint32_t picking_v = b/2;
+            uint32_t picking_material_index = r>>5;
+            uint32_t picking_u = g>>1;
+            uint32_t picking_v = b>>1;
+
+            // Do "picking" based on screen space coordinates texture preview
+            // (fixes incompatibilities with certain OpenGL drivers,
+            // seen for example with Windows 7 Generic GDI in a Boxes VM)
+            if (texture_x >= 0 && texture_x < texture_layout->rect.w &&
+                    texture_y >= 0 && texture_y < texture_layout->rect.h) {
+                int part_w = 128;
+                int part_h = 128;
+                picking_material_index = 1 + (texture_y / part_h) * 2 + (texture_x / part_w);
+                picking_u = part_h - 1 - texture_y % part_h;
+                picking_v = texture_x % part_w;
+            }
 
             if (picking_material_index > 0 && picking_material_index < 5) {
                 picking_material_index--;

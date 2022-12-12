@@ -8,6 +8,8 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 
 ### Changed
 - Font textures are uploaded using power-of-two for OpenGL drivers without NPOT support
+- Implement picking of texture coordinates using mouse coordinates when drawing on the
+  texture preview (3D view picking will be broken on the Generic GDI OpenGL 1.1 driver)
 
 
 ## 1.0.2 - 2022-01-03

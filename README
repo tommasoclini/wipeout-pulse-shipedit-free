@@ -56,6 +56,14 @@ also helps.
 PPSSPP shows a warning on-screen about old firmware when loading the ship
 skin savegame. No such error is displayed on a PSP or Vita.
 
+On Windows 7 and other versions without a proper OpenGL ICD installed, the
+fallback "Generic GDI" OpenGL 1.1 implementation has some shortcomings (e.g.
+picking will not work properly). It's recommended that you install a proper
+OpenGL driver for your GPU, or if you don't have one, install Federico Dossena's
+"Mesa3D for Windows", which provides a modern software OpenGL renderer using
+the Mesa3D open source project: https://fdossena.com/?p=mesa/index.frag (just
+place "opengl32.dll" from the Mesa3D for Windows download next to shipedit.exe).
+
 
 KEYBINDINGS
 -----------
