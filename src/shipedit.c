@@ -852,14 +852,30 @@ struct TexVertex {
 void
 draw_with_font_xy(struct InMemoryFont *font, float x, float y, const char *text)
 {
+    if (text[0] == '\0') {
+        return;
+    }
+
     int w, h;
     uint8_t *pixels = in_memory_font_render_rgba(font, text, &w, &h);
 
+    int w2 = 1;
+    while (w2 < w) {
+        w2 *= 2;
+    }
+    int h2 = 1;
+    while (h2 < h) {
+        h2 *= 2;
+    }
+
+    float sw = (float)w / (float)w2;
+    float sh = (float)h / (float)h2;
+
     struct TexVertex vertices[] = {
         { { (float)x,          (float)y          }, { 0.f, 0.f } },
-        { { (float)x+(float)w, (float)y          }, { 1.f, 0.f } },
-        { { (float)x,          (float)y+(float)h }, { 0.f, 1.f } },
-        { { (float)x+(float)w, (float)y+(float)h }, { 1.f, 1.f } },
+        { { (float)x+(float)w, (float)y          }, { sw,  0.f } },
+        { { (float)x,          (float)y+(float)h }, { 0.f, sh  } },
+        { { (float)x+(float)w, (float)y+(float)h }, { sw,  sh  } },
     };
 
     GLuint tex;
@@ -868,7 +884,8 @@ draw_with_font_xy(struct InMemoryFont *font, float x, float y, const char *text)
     glBindTexture(GL_TEXTURE_2D, tex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w2, h2, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_DEPTH_TEST);
