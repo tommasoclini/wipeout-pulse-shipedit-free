@@ -12,16 +12,20 @@ build_to() {
     HOSTARCH=$3
     LIBDEP=$4
 
-    test -f zlib-1.2.11.tar.gz || wget https://zlib.net/zlib-1.2.11.tar.gz
-    test -f libpng-1.6.37.tar.xz || wget http://prdownloads.sourceforge.net/libpng/libpng-1.6.37.tar.xz
-    test -f SDL2-2.0.14.tar.gz || wget https://www.libsdl.org/release/SDL2-2.0.14.tar.gz
+    ZLIB_VERSION="1.2.13"
+    LIBPNG_VERSION="1.6.39"
+    SDL2_VERSION="2.26.1"
+
+    test -f zlib-$ZLIB_VERSION.tar.gz || wget https://zlib.net/zlib-$ZLIB_VERSION.tar.gz
+    test -f libpng-$LIBPNG_VERSION.tar.xz || wget http://prdownloads.sourceforge.net/libpng/libpng-$LIBPNG_VERSION.tar.xz
+    test -f SDL2-$SDL2_VERSION.tar.gz || wget https://www.libsdl.org/release/SDL2-$SDL2_VERSION.tar.gz
 
     mkdir -p $OUTDIR
     cd $OUTDIR
 
-    test -d zlib-1.2.11 || tar xvf ../zlib-1.2.11.tar.gz
+    test -d zlib-$ZLIB_VERSION || tar xvf ../zlib-$ZLIB_VERSION.tar.gz
     test -f include/zlib.h || (
-        cd zlib-1.2.11
+        cd zlib-$ZLIB_VERSION
         PREFIXDIR=..
         make -j8 -f win32/Makefile.gcc \
             BINARY_PATH=$PREFIXDIR/bin \
@@ -31,17 +35,17 @@ build_to() {
         cd ..
     )
 
-    test -d libpng-1.6.37 || tar xvf ../libpng-1.6.37.tar.xz
+    test -d libpng-$LIBPNG_VERSION || tar xvf ../libpng-$LIBPNG_VERSION.tar.xz
     test -f include/png.h || (
-        cd libpng-1.6.37
+        cd libpng-$LIBPNG_VERSION
         ./configure --prefix=$(pwd)/.. --host=$HOSTARCH LDFLAGS=-L$(pwd)/../lib CPPFLAGS=-I$(pwd)/../include
         make -j8 install
         cd ..
     )
 
-    test -d SDL2-2.0.14 || tar xvf ../SDL2-2.0.14.tar.gz
+    test -d SDL2-$SDL2_VERSION || tar xvf ../SDL2-$SDL2_VERSION.tar.gz
     test -f include/SDL2/SDL.h || (
-        cd SDL2-2.0.14
+        cd SDL2-$SDL2_VERSION
         ./configure --prefix=$(pwd)/.. --host=$HOSTARCH LDFLAGS=-L$(pwd)/../lib CPPFLAGS=-I$(pwd)/../include
         make -j8 install
         cd ..

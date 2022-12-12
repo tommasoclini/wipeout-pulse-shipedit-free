@@ -10,6 +10,7 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 - Font textures are uploaded using power-of-two for OpenGL drivers without NPOT support
 - Implement picking of texture coordinates using mouse coordinates when drawing on the
   texture preview (3D view picking will be broken on the Generic GDI OpenGL 1.1 driver)
+- Updated dependencies to newest versions: zlib 1.2.13, libpng 1.6.39, SDL2 2.16.1
 
 
 ## 1.0.2 - 2022-01-03
