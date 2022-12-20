@@ -60,6 +60,10 @@ build_to() {
 
     cp shipedit.exe ../../../shipedit-$VERSION-$OUTDIR-mingw.exe
 
+    pushd ../../..
+    zip shipedit-$VERSION-$OUTDIR-mingw.zip README LICENSE CHANGELOG.md shipedit-$VERSION-$OUTDIR-mingw.exe
+    popd
+
     cd ../..
 }
 
