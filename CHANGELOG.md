@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## UNRELEASED
+## 1.0.3 - 2022-12-20
 
 ### Changed
 - Font textures are uploaded using power-of-two for OpenGL drivers without NPOT support

@@ -4,7 +4,7 @@ cd "$(dirname "$0")"
 
 set -e -x
 
-VERSION="1.0.2"
+VERSION="1.0.3"
 
 build_to() {
     OUTDIR=$1

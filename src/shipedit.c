@@ -53,7 +53,7 @@
 #include "util.h"
 #include "fps.h"
 
-#define VERSION "v1.0.2"
+#define VERSION "v1.0.3"
 
 struct InMemoryFont *
 g_font_gui = NULL;
