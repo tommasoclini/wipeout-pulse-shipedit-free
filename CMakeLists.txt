@@ -34,6 +34,7 @@ if(WIN32)
 
     list(APPEND NATIVEFILEDIALOG_SOURCES
         src/nativeui_win32.c
+        src/shipedit.rc
     )
 else()
     find_package(SDL2 REQUIRED)
