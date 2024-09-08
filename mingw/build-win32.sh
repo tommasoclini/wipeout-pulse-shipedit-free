@@ -16,7 +16,7 @@ build_to() {
     LIBPNG_VERSION="1.6.39"
     SDL2_VERSION="2.26.1"
 
-    test -f zlib-$ZLIB_VERSION.tar.gz || wget https://zlib.net/zlib-$ZLIB_VERSION.tar.gz
+    test -f zlib-$ZLIB_VERSION.tar.gz || wget https://zlib.net/fossils/zlib-$ZLIB_VERSION.tar.gz
     test -f libpng-$LIBPNG_VERSION.tar.xz || wget http://prdownloads.sourceforge.net/libpng/libpng-$LIBPNG_VERSION.tar.xz
     test -f SDL2-$SDL2_VERSION.tar.gz || wget https://www.libsdl.org/release/SDL2-$SDL2_VERSION.tar.gz
 
