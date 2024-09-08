@@ -20,7 +20,7 @@ image: debian:latest
 
 before_script:
   - apt-get update
-  - apt-get install -Y make cmake mingw-w64 xz-utils zip
+  - apt-get install -y make cmake mingw-w64 xz-utils zip
 
 stages:          # List of stages for jobs, and their order of execution
   - build
